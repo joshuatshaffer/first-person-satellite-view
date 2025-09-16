@@ -1,10 +1,21 @@
 import { useAtom } from "jotai";
-import { filterRadioModesAtom } from "../../urlAtom";
+import {
+  filterFrequencyMaxAtom,
+  filterFrequencyMinAtom,
+  filterRadioModesAtom,
+} from "../../urlAtom";
 
 const modes = ["FM", "AM", "USB", "LSB"];
 
 export function FilterForm() {
   const [filterRadioModes, setFilterRadioModes] = useAtom(filterRadioModesAtom);
+
+  const [filterFrequencyMin, setFilterFrequencyMinAtom] = useAtom(
+    filterFrequencyMinAtom
+  );
+  const [filterFrequencyMax, setFilterFrequencyMaxAtom] = useAtom(
+    filterFrequencyMaxAtom
+  );
 
   return (
     <div>
@@ -37,6 +48,11 @@ export function FilterForm() {
           max={40_000_000_000}
           defaultValue={0}
           style={{ textAlign: "right" }}
+          value={filterFrequencyMin}
+          onChange={(event) => {
+            const value = event.currentTarget.valueAsNumber;
+            setFilterFrequencyMinAtom(Number.isNaN(value) ? undefined : value);
+          }}
         />{" "}
         <input
           type="number"
@@ -45,6 +61,11 @@ export function FilterForm() {
           max={40_000_000_000}
           defaultValue={40_000_000_000}
           style={{ textAlign: "right" }}
+          value={filterFrequencyMax}
+          onChange={(event) => {
+            const value = event.currentTarget.valueAsNumber;
+            setFilterFrequencyMaxAtom(Number.isNaN(value) ? undefined : value);
+          }}
         />
       </div>
     </div>

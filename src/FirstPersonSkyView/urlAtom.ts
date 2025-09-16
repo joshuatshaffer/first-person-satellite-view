@@ -7,12 +7,26 @@ export interface UrlState {
   searchText: string;
 
   filterRadioModes: string[];
+  filterFrequencyMin: number | undefined;
+  filterFrequencyMax: number | undefined;
 }
 
 const selectedSatelliteIdKey = "s";
 const highlightedSatelliteIdsKey = "h";
 const searchTextKey = "q";
 const filterRadioModesKey = "radio-mode";
+const filterFrequencyMinKey = "frequency-min";
+const filterFrequencyMaxKey = "frequency-max";
+
+function toNumber(value: string | null | undefined) {
+  if (!value) return undefined;
+
+  const num = Number(value);
+
+  if (!Number.isFinite(num)) return undefined;
+
+  return num;
+}
 
 function readStateFromUrl(): UrlState {
   const searchParams = new URLSearchParams(window.location.search.slice(1));
@@ -24,6 +38,8 @@ function readStateFromUrl(): UrlState {
 
     searchText: searchParams.get(searchTextKey) || "",
     filterRadioModes: searchParams.getAll(filterRadioModesKey) || [],
+    filterFrequencyMin: toNumber(searchParams.get(filterFrequencyMinKey)),
+    filterFrequencyMax: toNumber(searchParams.get(filterFrequencyMaxKey)),
   };
 }
 
@@ -44,6 +60,14 @@ function writeStateToUrl(state: UrlState) {
 
   for (const m of state.filterRadioModes.toSorted()) {
     searchParams.append(filterRadioModesKey, m);
+  }
+
+  if (state.filterFrequencyMin !== undefined) {
+    searchParams.set(filterFrequencyMinKey, "" + state.filterFrequencyMin);
+  }
+
+  if (state.filterFrequencyMax !== undefined) {
+    searchParams.set(filterFrequencyMaxKey, "" + state.filterFrequencyMax);
   }
 
   searchParams.sort();
@@ -101,5 +125,25 @@ export const filterRadioModesAtom = atom(
       prev.filterRadioModes === filterRadioModes
         ? prev
         : { ...prev, filterRadioModes }
+    )
+);
+
+export const filterFrequencyMinAtom = atom(
+  (get) => get(urlStateAtom).filterFrequencyMin,
+  (_get, set, filterFrequencyMin: UrlState["filterFrequencyMin"]) =>
+    set(urlStateAtom, (prev) =>
+      prev.filterFrequencyMin === filterFrequencyMin
+        ? prev
+        : { ...prev, filterFrequencyMin }
+    )
+);
+
+export const filterFrequencyMaxAtom = atom(
+  (get) => get(urlStateAtom).filterFrequencyMax,
+  (_get, set, filterFrequencyMax: UrlState["filterFrequencyMax"]) =>
+    set(urlStateAtom, (prev) =>
+      prev.filterFrequencyMax === filterFrequencyMax
+        ? prev
+        : { ...prev, filterFrequencyMax }
     )
 );
