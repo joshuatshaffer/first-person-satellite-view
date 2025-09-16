@@ -11,6 +11,7 @@ export function SearchInput() {
       <input
         ref={inputRef}
         type="search"
+        aria-label="Search"
         placeholder="Search satellites"
         value={searchText}
         onChange={(event) => {

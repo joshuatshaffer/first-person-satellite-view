@@ -39,11 +39,12 @@ export function FilterForm() {
           </label>
         ))}
       </div>
-      <div>
-        Frequency{" "}
+      <fieldset>
+        <legend> Frequency</legend>
         <input
           type="number"
           name="frequency-min"
+          aria-label="Minimum frequency"
           min={0}
           max={40_000_000_000}
           defaultValue={0}
@@ -57,6 +58,7 @@ export function FilterForm() {
         <input
           type="number"
           name="frequency-max"
+          aria-label="Maximum frequency"
           min={0}
           max={40_000_000_000}
           defaultValue={40_000_000_000}
@@ -67,7 +69,7 @@ export function FilterForm() {
             setFilterFrequencyMaxAtom(Number.isNaN(value) ? undefined : value);
           }}
         />
-      </div>
+      </fieldset>
     </div>
   );
 }
