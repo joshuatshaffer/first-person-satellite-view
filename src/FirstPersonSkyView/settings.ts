@@ -50,7 +50,7 @@ const observerPositionSavedAtom = atomWithStorage<{
 });
 
 // TODO: Handle errors and permissions.
-export const geolocationAtom = atom<
+const geolocationAtom = atom<
   GeolocationPosition | GeolocationPositionError | null
 >(null);
 

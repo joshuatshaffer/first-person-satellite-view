@@ -14,7 +14,7 @@ internalAtom.onMount = (set) => {
   };
 };
 
-export const fullscreenElementAtom = atom(
+const fullscreenElementAtom = atom(
   (get) => get(internalAtom),
   (_get, _set, element: Element | null) => {
     if (element) {

@@ -9,6 +9,7 @@
     "build": "tsc -b && vite build",
     "deploy": "/home/joshua/data-i/personal-projects/active/my-server/derployer/derployer.sh satellite ./dist/client",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "knip": "knip",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "eslint": "9.30.1",
     "eslint-plugin-react-hooks": "5.2.0",
     "eslint-plugin-react-refresh": "0.4.20",
+    "knip": "5.63.1",
     "prettier": "3.6.2",
     "sass-embedded": "1.89.2",
     "tsx": "4.20.3",
