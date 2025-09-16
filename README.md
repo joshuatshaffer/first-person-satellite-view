@@ -20,6 +20,17 @@
 
 ## To Do
 
+- Orbit prediction
+  - Draw lines
+  - List upcoming passes
+- Offline support (PWA)
+- Radio information
+  - Download from SatNOGS
+  - Search satellites
+    - Radio mode
+    - Frequency
+  - Show frequency and doppler shift
+
 - [ ] Upgrade to the latest version of satellite.js and use OMM instead of TLE.
 - [x] Move control panel to the right side.
 - [x] Stop labels from scrolling when the control panel scrolls.
@@ -56,6 +67,10 @@
 - [x] Improve performance.
   - [x] Use a web worker for computing satellite positions.
   - [ ] ~~Instead of computing every frame, compute key frames and interpolate between them.~~ Not needed.
+- [ ] Data UI
+  - [ ] Show errors
+  - [ ] Last fetched
+  - [ ] Option to update now
 
 ### Search UI
 
