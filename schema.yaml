@@ -1,0 +1,1766 @@
+openapi: 3.0.3
+info:
+  title: SatNOGS DB
+  version: '1.1'
+  description: SatNOGS DB is a crowdsourced database of details about orbital                     satellites
+    and data collected from them.
+  contact:
+    name: SatNOGS Developer Chat
+    url: https://riot.im/app/#/room/#satnogs-dev:matrix.org
+  license:
+    name: AGPL 3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+paths:
+  /api/artifacts/:
+    get:
+      operationId: artifacts_list
+      description: Artifacts are file-formatted objects collected from a satellite
+        observation.
+      parameters:
+      - in: query
+        name: network_obs_id
+        schema:
+          type: integer
+          format: int64
+        description: Given a SatNOGS Network observation ID, this will return any                              artifacts
+          files associated with the observation.
+      - in: query
+        name: observation_ids
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - artifacts
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedArtifactList'
+              examples:
+                ViewArtifactExample1:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1337
+                      network_obs_id: 3376466
+                      artifact_file: http://db-dev.satnogs.org/media/artifacts/bba35b2d-76cc-4a8f-9b8a-4a2ecb09c6df.h5
+                  summary: 'Example: retrieving a specific artifact'
+                  description: This is an example response when requesting a specific
+                    artifact previously uploaded to DB
+          description: ''
+    post:
+      operationId: artifacts_create
+      description: |-
+        Creates observation artifact from an [HDF5 formatted file][hdf5ref]
+        * Requires session or key authentication to create an artifact
+
+        [hdf5ref]: https://en.wikipedia.org/wiki/Hierarchical_Data_Format
+      tags:
+      - artifacts
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewArtifactRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewArtifactRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewArtifact'
+              examples:
+                NewArtifactExample1:
+                  value:
+                    id: 1337
+                  summary: 'Example: uploading artifact'
+                  description: This is an example response after successfully uploading
+                    an artifact file. The ID of the artifact is returned
+          description: ''
+  /api/artifacts/{id}/:
+    get:
+      operationId: artifacts_retrieve
+      description: Artifacts are file-formatted objects collected from a satellite
+        observation.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uri
+        description: The ID for the requested artifact entry in DB
+        required: true
+      tags:
+      - artifacts
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+              examples:
+                ViewArtifactExample1:
+                  value:
+                    id: 1337
+                    network_obs_id: 3376466
+                    artifact_file: http://db-dev.satnogs.org/media/artifacts/bba35b2d-76cc-4a8f-9b8a-4a2ecb09c6df.h5
+                  summary: 'Example: retrieving a specific artifact'
+                  description: This is an example response when requesting a specific
+                    artifact previously uploaded to DB
+          description: ''
+  /api/modes/:
+    get:
+      operationId: modes_list
+      description: Retrieve a complete list of RF Modes from SatNOGS DB
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      tags:
+      - modes
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mode'
+              examples:
+                ModeExample1:
+                  value:
+                  - - id: 49
+                      name: AFSK
+                  summary: 'Example: list all modes'
+                  description: This is a truncated example response for listing all
+                    RF Mode entries
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mode'
+          description: ''
+  /api/modes/{id}/:
+    get:
+      operationId: modes_retrieve
+      description: Retrieve a single RF Mode from SatNOGS DB based on its ID
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this mode.
+        required: true
+      tags:
+      - modes
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mode'
+              examples:
+                ModeExample1:
+                  value:
+                  - id: 49
+                    name: AFSK
+                  summary: 'Example: list all modes'
+                  description: This is a truncated example response for listing all
+                    RF Mode entries
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Mode'
+          description: ''
+  /api/optical-observations/:
+    get:
+      operationId: optical_observations_list
+      description: View for Optical Identifications
+      parameters:
+      - in: query
+        name: after
+        schema:
+          type: string
+          format: date-time
+        description: 'Search observations after date:'
+      - in: query
+        name: before
+        schema:
+          type: string
+          format: date-time
+        description: 'Search observations before date:'
+      - in: query
+        name: last_n
+        schema:
+          type: number
+        description: 'Last N observations:'
+      tags:
+      - optical-observations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OpticalObservation'
+          description: ''
+    post:
+      operationId: optical_observations_create
+      description: View for Optical Identifications
+      tags:
+      - optical-observations
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OpticalObservationCreateRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpticalObservationCreate'
+          description: ''
+  /api/optical-observations/{id}/:
+    get:
+      operationId: optical_observations_retrieve
+      description: View for Optical Identifications
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this optical observation.
+        required: true
+      tags:
+      - optical-observations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpticalObservation'
+          description: ''
+  /api/satellites/:
+    get:
+      operationId: satellites_list
+      description: Retrieve a full or filtered list of satellites in SatNOGS DB
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      - in: query
+        name: in_orbit
+        schema:
+          type: boolean
+        description: Filter by satellites currently in orbit (True) or those that
+          have                             decayed (False)
+      - in: query
+        name: norad_cat_id
+        schema:
+          type: string
+        description: Select a satellite by its NORAD-assigned identifier
+        examples:
+          25544(ISS):
+            value: 25544
+            summary: 25544 (ISS)
+      - in: query
+        name: sat_id
+        schema:
+          type: string
+        description: Satellite ID
+      - in: query
+        name: status
+        schema:
+          type: string
+        description: 'Filter by satellite status: alive dead future re-entered'
+      tags:
+      - satellites
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Satellite'
+              examples:
+                SatelliteExample1:
+                  value:
+                  - norad_cat_id: 25544
+                    name: ISS
+                    names: ZARYA
+                    image: https://db-satnogs.freetls.fastly.net/media/satellites/ISS.jpg
+                    status: alive
+                    decayed: null
+                    launched: '1998-11-20T00:00:00Z'
+                    deployed: '1998-11-20T00:00:00Z'
+                    website: https://www.nasa.gov/mission_pages/station/main/index.html
+                    operator: None
+                    countries: RU,US
+                    telemetries:
+                    - decoder: iss
+                  summary: 'Example: retrieving ISS'
+                  description: This is an example response for retrieving the ISS
+                    entry, NORAD ID 25544
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Satellite'
+          description: ''
+    post:
+      operationId: satellites_create
+      description: Creates a satellite suggestion.
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      tags:
+      - satellites
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Satellite'
+              examples:
+                SatelliteExample1:
+                  value:
+                    norad_cat_id: 25544
+                    name: ISS
+                    names: ZARYA
+                    image: https://db-satnogs.freetls.fastly.net/media/satellites/ISS.jpg
+                    status: alive
+                    decayed: null
+                    launched: '1998-11-20T00:00:00Z'
+                    deployed: '1998-11-20T00:00:00Z'
+                    website: https://www.nasa.gov/mission_pages/station/main/index.html
+                    operator: None
+                    countries: RU,US
+                    telemetries:
+                    - decoder: iss
+                  summary: 'Example: retrieving ISS'
+                  description: This is an example response for retrieving the ISS
+                    entry, NORAD ID 25544
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Satellite'
+          description: ''
+  /api/satellites/{satellite_identifier__sat_id}/:
+    get:
+      operationId: satellites_retrieve
+      description: Retrieve details on a single satellite in SatNOGS DB
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      - in: path
+        name: satellite_identifier__sat_id
+        schema:
+          type: string
+        description: Select a satellite by its Satellite Identifier
+        required: true
+      tags:
+      - satellites
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Satellite'
+              examples:
+                SatelliteExample1:
+                  value:
+                    norad_cat_id: 25544
+                    name: ISS
+                    names: ZARYA
+                    image: https://db-satnogs.freetls.fastly.net/media/satellites/ISS.jpg
+                    status: alive
+                    decayed: null
+                    launched: '1998-11-20T00:00:00Z'
+                    deployed: '1998-11-20T00:00:00Z'
+                    website: https://www.nasa.gov/mission_pages/station/main/index.html
+                    operator: None
+                    countries: RU,US
+                    telemetries:
+                    - decoder: iss
+                  summary: 'Example: retrieving ISS'
+                  description: This is an example response for retrieving the ISS
+                    entry, NORAD ID 25544
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Satellite'
+          description: ''
+  /api/telemetry/:
+    get:
+      operationId: telemetry_list
+      description: |-
+        Lists data from satellite if they are filtered by NORAD ID or Satellite ID. Also logs the
+        requests if it is set to do so.
+      parameters:
+      - in: query
+        name: app_source
+        schema:
+          type: string
+        description: 'The submission source for the telemetry frames: manual (a manual                              upload/entry),
+          network (SatNOGS Network observations), or sids                              (legacy
+          API submission)'
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: end
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      - in: query
+        name: is_decoded
+        schema:
+          type: boolean
+      - in: query
+        name: observer
+        schema:
+          type: string
+        description: (string) name of the observer (submitter) to retrieve telemetry
+          data                             from
+      - in: query
+        name: sat_id
+        schema:
+          type: string
+        description: Satellite ID
+      - in: query
+        name: satellite
+        schema:
+          type: string
+        description: NORAD ID of a satellite to filter telemetry data for
+        examples:
+          25544(ISS):
+            value: 25544
+            summary: 25544 (ISS)
+      - in: query
+        name: start
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: transmitter
+        schema:
+          type: string
+        description: Not currently in use
+      tags:
+      - telemetry
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTelemetryList'
+              examples:
+                TelemetryExample1:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - norad_cat_id: 40379
+                      transmitter: null
+                      app_source: network
+                      decoded: influxdb
+                      frame: 968870A6A0A66086A240404040E103F0ABCD0000004203F500B475E215EA5FA0040C000B000900010025008E55EE7B64650100000000AE4D07005D660F007673340000C522370067076507FD0C60002700FE0CC50E0D00AD0E0B069007BD0E0E00650D21001400FE0C910054007007690D8700FC0CBA00E40743001C0F140077077807D7078E00120F240068076D07DA0A74003D0F2500830780077A0AC401490F960070077207FDFC9F079507950700C03B0015009AFF6900C8FFE0FFA700EBFF3A00F200F3FF02016D0A590A0D0AE3099B0C830CB50DA70D9D06CC0043009401B8338B334C20001000000000009F02000003000000FF723D00BEFFFFFFFF2E89B0151C00
+                      observer: KB9JHU-EM69uf
+                      timestamp: '2021-01-05T22:28:09Z'
+                  summary: 'Example: retrieving a single Telemetry frame'
+                  description: This is an example response for retrieving a single
+                    data frame
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTelemetryList'
+          description: ''
+    post:
+      operationId: telemetry_create
+      description: Creates a frame of telemetry data from a satellite observation.
+      tags:
+      - telemetry
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelemetryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelemetryRequest'
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TelemetryRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/telemetry/{id}/:
+    get:
+      operationId: telemetry_retrieve
+      description: |-
+        View into the Telemetry objects in the SatNOGS DB database. Currently,
+        this table is inclusive of all data collected from satellite downlink
+        observations
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this demod data.
+        required: true
+      tags:
+      - telemetry
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Telemetry'
+              examples:
+                TelemetryExample1:
+                  value:
+                    norad_cat_id: 40379
+                    transmitter: null
+                    app_source: network
+                    decoded: influxdb
+                    frame: 968870A6A0A66086A240404040E103F0ABCD0000004203F500B475E215EA5FA0040C000B000900010025008E55EE7B64650100000000AE4D07005D660F007673340000C522370067076507FD0C60002700FE0CC50E0D00AD0E0B069007BD0E0E00650D21001400FE0C910054007007690D8700FC0CBA00E40743001C0F140077077807D7078E00120F240068076D07DA0A74003D0F2500830780077A0AC401490F960070077207FDFC9F079507950700C03B0015009AFF6900C8FFE0FFA700EBFF3A00F200F3FF02016D0A590A0D0AE3099B0C830CB50DA70D9D06CC0043009401B8338B334C20001000000000009F02000003000000FF723D00BEFFFFFFFF2E89B0151C00
+                    observer: KB9JHU-EM69uf
+                    timestamp: '2021-01-05T22:28:09Z'
+                  summary: 'Example: retrieving a single Telemetry frame'
+                  description: This is an example response for retrieving a single
+                    data frame
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Telemetry'
+          description: ''
+  /api/tle/:
+    get:
+      operationId: tle_list
+      description: |-
+        Read-only view into the most recent two-line elements (TLE) in the SatNOGS DB
+        database
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - 3le
+          - json
+      - in: query
+        name: norad_cat_id
+        schema:
+          type: integer
+        description: Satellite NORAD ID
+      - in: query
+        name: sat_id
+        schema:
+          type: string
+        description: Satellite ID
+      - in: query
+        name: tle_source
+        schema:
+          type: string
+        description: Source of TLE
+      tags:
+      - tle
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LatestTleSet'
+              examples:
+                TLEExample1:
+                  value:
+                  - tle0: 0 ISS (ZARYA)
+                    tle1: 1 25544U 98067A   21009.90234038  .00001675  00000-0  38183-4
+                      0  9997
+                    tle2: 2 25544  51.6464  45.6388 0000512 205.3232 213.2158 15.49275327264062
+                    tle_source: undisclosed
+                    norad_cat_id: 25544
+                    updated: 2021-01-09T22:46:37.781923+0000
+                  summary: 'Example: TLE API response'
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LatestTleSet'
+          description: ''
+  /api/tle/{id}/:
+    get:
+      operationId: tle_retrieve
+      description: |-
+        Read-only view into the most recent two-line elements (TLE) in the SatNOGS DB
+        database
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - 3le
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this latest tle set.
+        required: true
+      tags:
+      - tle
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LatestTleSet'
+              examples:
+                TLEExample1:
+                  value:
+                    tle0: 0 ISS (ZARYA)
+                    tle1: 1 25544U 98067A   21009.90234038  .00001675  00000-0  38183-4
+                      0  9997
+                    tle2: 2 25544  51.6464  45.6388 0000512 205.3232 213.2158 15.49275327264062
+                    tle_source: undisclosed
+                    norad_cat_id: 25544
+                    updated: 2021-01-09T22:46:37.781923+0000
+                  summary: 'Example: TLE API response'
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/LatestTleSet'
+          description: ''
+  /api/transmitters/:
+    get:
+      operationId: transmitters_list
+      description: |-
+        View into the Transmitter entities in the SatNOGS DB database.
+        Transmitters are inclusive of Transceivers and Transponders
+      parameters:
+      - in: query
+        name: alive
+        schema:
+          type: boolean
+        description: Alive
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      - in: query
+        name: mode
+        schema:
+          type: integer
+      - in: query
+        name: sat_id
+        schema:
+          type: string
+        description: Satellite ID
+      - in: query
+        name: satellite__norad_cat_id
+        schema:
+          type: string
+        description: NORAD ID of a satellite to filter telemetry data for
+        examples:
+          25544(ISS):
+            value: 25544
+            summary: 25544 (ISS)
+      - in: query
+        name: service
+        schema:
+          type: string
+        description: 'Filter by transmitter service: Aeronautical Amateur Broadcasting
+          Earth Exploration Fixed Inter-satellite Maritime Meteorological Mobile Radiolocation
+          Radionavigational Space Operation Space Research Standard Frequency and
+          Time Signal Unknown'
+        examples:
+          Amateur:
+            value: '''Amateur'''
+      - in: query
+        name: status
+        schema:
+          type: string
+        description: 'Filter by transmitter status: active inactive invalid'
+        examples:
+          Active:
+            value: '''active'''
+            summary: active
+      - in: query
+        name: type
+        schema:
+          type: string
+        description: 'Filter by transmitter type: Transmitter Transceiver Transponder'
+        examples:
+          Transmitter:
+            value: '''Transmitter'''
+      - in: query
+        name: uplink_mode
+        schema:
+          type: integer
+      - in: query
+        name: uuid
+        schema:
+          type: string
+      tags:
+      - transmitters
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transmitter'
+              examples:
+                TransmitterExample1:
+                  value:
+                  - uuid: eozSf5mKyzNxoascs8V4bV
+                    description: Mode V/U FM - Voice Repeater
+                    alive: true
+                    type: Transceiver
+                    uplink_low: 145990000
+                    uplink_high: null
+                    uplink_drift: null
+                    downlink_low: 437800000
+                    downlink_high: null
+                    downlink_drift: null
+                    mode: FM
+                    mode_id: 1
+                    uplink_mode: FM
+                    invert: false
+                    baud: null
+                    norad_cat_id: 25544
+                    status: active
+                    updated: '2020-09-03T13:14:41.552071Z'
+                    citation: https://www.ariss.org/press-releases/september-2-2020
+                    service: Amateur
+                    iaru_coordination: ''
+                    iaru_coordination_url: ''
+                    itu_notification: ''
+                    unconfirmed: false
+                  summary: 'Example: Transmitter API response'
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transmitter'
+          description: ''
+    post:
+      operationId: transmitters_create
+      description: Creates a transmitter suggestion.
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      tags:
+      - transmitters
+      requestBody:
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/TransmitterRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transmitter'
+              examples:
+                TransmitterExample1:
+                  value:
+                    uuid: eozSf5mKyzNxoascs8V4bV
+                    description: Mode V/U FM - Voice Repeater
+                    alive: true
+                    type: Transceiver
+                    uplink_low: 145990000
+                    uplink_high: null
+                    uplink_drift: null
+                    downlink_low: 437800000
+                    downlink_high: null
+                    downlink_drift: null
+                    mode: FM
+                    mode_id: 1
+                    uplink_mode: FM
+                    invert: false
+                    baud: null
+                    norad_cat_id: 25544
+                    status: active
+                    updated: '2020-09-03T13:14:41.552071Z'
+                    citation: https://www.ariss.org/press-releases/september-2-2020
+                    service: Amateur
+                    iaru_coordination: ''
+                    iaru_coordination_url: ''
+                    itu_notification: ''
+                    unconfirmed: false
+                  summary: 'Example: Transmitter API response'
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Transmitter'
+          description: ''
+  /api/transmitters/{uuid}/:
+    get:
+      operationId: transmitters_retrieve
+      description: |-
+        View into the Transmitter entities in the SatNOGS DB database.
+        Transmitters are inclusive of Transceivers and Transponders
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - json-ld
+      - in: path
+        name: uuid
+        schema:
+          type: string
+        required: true
+      tags:
+      - transmitters
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transmitter'
+              examples:
+                TransmitterExample1:
+                  value:
+                    uuid: eozSf5mKyzNxoascs8V4bV
+                    description: Mode V/U FM - Voice Repeater
+                    alive: true
+                    type: Transceiver
+                    uplink_low: 145990000
+                    uplink_high: null
+                    uplink_drift: null
+                    downlink_low: 437800000
+                    downlink_high: null
+                    downlink_drift: null
+                    mode: FM
+                    mode_id: 1
+                    uplink_mode: FM
+                    invert: false
+                    baud: null
+                    norad_cat_id: 25544
+                    status: active
+                    updated: '2020-09-03T13:14:41.552071Z'
+                    citation: https://www.ariss.org/press-releases/september-2-2020
+                    service: Amateur
+                    iaru_coordination: ''
+                    iaru_coordination_url: ''
+                    itu_notification: ''
+                    unconfirmed: false
+                  summary: 'Example: Transmitter API response'
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Transmitter'
+          description: ''
+components:
+  schemas:
+    Artifact:
+      type: object
+      description: SatNOGS DB Artifacts API Serializer
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        network_obs_id:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        artifact_file:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - id
+    IaruCoordinationEnum:
+      enum:
+      - IARU Coordinated
+      - IARU Declined
+      - IARU Uncoordinated
+      - N/A
+      type: string
+      description: |-
+        * `IARU Coordinated` - IARU Coordinated
+        * `IARU Declined` - IARU Declined
+        * `IARU Uncoordinated` - IARU Uncoordinated
+        * `N/A` - N/A
+    LatestTleSet:
+      type: object
+      description: SatNOGS DB LatestTleSet API Serializer
+      properties:
+        tle0:
+          type: string
+          description: Returns TLE line 0
+          readOnly: true
+        tle1:
+          type: string
+          description: Returns TLE line 1
+          readOnly: true
+        tle2:
+          type: string
+          description: Returns TLE line 2
+          readOnly: true
+        tle_source:
+          type: string
+          description: Returns TLE source
+          readOnly: true
+        sat_id:
+          type: string
+          description: Returns Satellite Satellite Identifier
+          readOnly: true
+        norad_cat_id:
+          type: integer
+          format: int64
+          description: Returns Satellite NORAD ID
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          description: Returns TLE updated datetime
+          readOnly: true
+      required:
+      - norad_cat_id
+      - sat_id
+      - tle0
+      - tle1
+      - tle2
+      - tle_source
+      - updated
+    Mode:
+      type: object
+      description: SatNOGS DB Mode API Serializer
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 25
+      required:
+      - id
+      - name
+    NewArtifact:
+      type: object
+      description: SatNOGS Network New Artifact API Serializer
+      properties:
+        artifact_file:
+          type: string
+          format: uri
+          nullable: true
+    NewArtifactRequest:
+      type: object
+      description: SatNOGS Network New Artifact API Serializer
+      properties:
+        artifact_file:
+          type: string
+          format: binary
+          nullable: true
+    OpticalIdentification:
+      type: object
+      description: Serializer for satellite identifications of an Optical Observation
+      properties:
+        norad_id:
+          type: integer
+          readOnly: true
+          nullable: true
+        satellite_id:
+          type: string
+          description: Returns the sat_id of the satellite
+          readOnly: true
+      required:
+      - norad_id
+      - satellite_id
+    OpticalObservation:
+      type: object
+      description: Serializer for Optical Observation
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start:
+          type: string
+          format: date-time
+          readOnly: true
+        station_id:
+          type: integer
+          readOnly: true
+        diagnostic_plot_url:
+          type: string
+          format: uri
+          description: Returns Satellite image URI
+          readOnly: true
+        identifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpticalIdentification'
+        uploader:
+          type: integer
+          readOnly: true
+          nullable: true
+        data:
+          readOnly: true
+      required:
+      - data
+      - diagnostic_plot_url
+      - id
+      - identifications
+      - start
+      - station_id
+      - uploader
+    OpticalObservationCreate:
+      type: object
+      description: Serializer for creating an Optical Observation
+      properties:
+        data:
+          type: string
+          format: uri
+        diagnostic_plot:
+          type: string
+          format: uri
+      required:
+      - data
+      - diagnostic_plot
+    OpticalObservationCreateRequest:
+      type: object
+      description: Serializer for creating an Optical Observation
+      properties:
+        data:
+          type: string
+          format: binary
+        diagnostic_plot:
+          type: string
+          format: binary
+      required:
+      - data
+      - diagnostic_plot
+    PaginatedArtifactList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artifact'
+    PaginatedTelemetryList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Telemetry'
+    Satellite:
+      type: object
+      description: SatNOGS DB Satellite API Serializer
+      properties:
+        sat_id:
+          type: string
+          description: Returns Satellite sat_id
+          readOnly: true
+        norad_cat_id:
+          type: integer
+          format: int64
+          description: Returns Satellite norad_cat_id
+          readOnly: true
+        norad_follow_id:
+          type: integer
+          format: int64
+          description: Returns Satellite norad_follow_id
+          readOnly: true
+        name:
+          type: string
+          description: Returns Satellite name
+          readOnly: true
+        names:
+          type: string
+          description: Returns Satellite alternative names
+          readOnly: true
+        image:
+          type: string
+          format: uri
+          description: Returns Satellite image URI
+          readOnly: true
+        status:
+          type: string
+          description: Returns Satellite status text
+          readOnly: true
+        decayed:
+          type: string
+          format: date-time
+          description: Returns Satellite decayed datetime
+          readOnly: true
+        launched:
+          type: string
+          format: date-time
+          description: Returns Satellite launched datetime
+          readOnly: true
+        deployed:
+          type: string
+          format: date-time
+          description: Returns Satellite deployed datetime
+          readOnly: true
+        website:
+          type: string
+          format: uri
+          description: Returns Satellite website
+          readOnly: true
+        operator:
+          type: string
+          description: Returns operator text
+          readOnly: true
+        countries:
+          type: string
+          description: Returns countires
+          readOnly: true
+        telemetries:
+          type: object
+          additionalProperties: {}
+          description: Returns telemetries
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          description: Returns Satellite decayed datetime
+          readOnly: true
+        citation:
+          type: string
+          description: Returns Satellite decayed datetime
+          readOnly: true
+        is_frequency_violator:
+          type: boolean
+          description: Returns if there is a frequency violation
+          readOnly: true
+        associated_satellites:
+          type: object
+          additionalProperties: {}
+          description: Returns Satellite IDs that are associated with the Satellite
+          readOnly: true
+      required:
+      - associated_satellites
+      - citation
+      - countries
+      - decayed
+      - deployed
+      - image
+      - is_frequency_violator
+      - launched
+      - name
+      - names
+      - norad_cat_id
+      - norad_follow_id
+      - operator
+      - sat_id
+      - status
+      - telemetries
+      - updated
+      - website
+    ServiceEnum:
+      enum:
+      - Aeronautical
+      - Amateur
+      - Broadcasting
+      - Earth Exploration
+      - Fixed
+      - Inter-satellite
+      - Maritime
+      - Meteorological
+      - Mobile
+      - Radiolocation
+      - Radionavigational
+      - Space Operation
+      - Space Research
+      - Standard Frequency and Time Signal
+      - Unknown
+      type: string
+      description: |-
+        * `Aeronautical` - Aeronautical
+        * `Amateur` - Amateur
+        * `Broadcasting` - Broadcasting
+        * `Earth Exploration` - Earth Exploration
+        * `Fixed` - Fixed
+        * `Inter-satellite` - Inter-satellite
+        * `Maritime` - Maritime
+        * `Meteorological` - Meteorological
+        * `Mobile` - Mobile
+        * `Radiolocation` - Radiolocation
+        * `Radionavigational` - Radionavigational
+        * `Space Operation` - Space Operation
+        * `Space Research` - Space Research
+        * `Standard Frequency and Time Signal` - Standard Frequency and Time Signal
+        * `Unknown` - Unknown
+    StatusEnum:
+      enum:
+      - active
+      - inactive
+      - invalid
+      type: string
+      description: |-
+        * `active` - active
+        * `inactive` - inactive
+        * `invalid` - invalid
+    Telemetry:
+      type: object
+      description: SatNOGS DB Telemetry API Serializer
+      properties:
+        sat_id:
+          type: string
+          description: Returns Satellite Identifier
+          readOnly: true
+        norad_cat_id:
+          type: integer
+          format: int64
+          description: Returns Satellite NORAD ID
+          readOnly: true
+        transmitter:
+          type: string
+          format: uuid
+          description: Returns Transmitter UUID
+          readOnly: true
+        decoded:
+          type: string
+          description: Returns the payload_decoded field
+          readOnly: true
+        frame:
+          type: string
+          description: Returns the payload frame
+          readOnly: true
+        version:
+          type: string
+          maxLength: 45
+        observation_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        station_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        associated_satellites:
+          type: object
+          additionalProperties: {}
+          description: Returns Satellite IDs that are associated with the Satellite
+          readOnly: true
+      required:
+      - associated_satellites
+      - decoded
+      - frame
+      - norad_cat_id
+      - sat_id
+      - transmitter
+    TelemetryRequest:
+      type: object
+      description: SatNOGS DB Telemetry API Serializer
+      properties:
+        version:
+          type: string
+          maxLength: 45
+        observation_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        station_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+    Transmitter:
+      type: object
+      description: SatNOGS DB Transmitter API Serializer
+      properties:
+        uuid:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          description: 'Short description for this entry, like: UHF 9k6 AFSK Telemetry'
+        alive:
+          type: boolean
+          description: Returns transmitter status
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        uplink_low:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the uplink, or bottom of the uplink range
+            for a             transponder
+        uplink_high:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the top of the uplink range for a transponder
+        uplink_drift:
+          type: integer
+          maximum: 99999
+          minimum: -99999
+          nullable: true
+          description: Receiver drift from the published uplink frequency, stored
+            in parts             per billion (PPB)
+        downlink_low:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the downlink, or bottom of the downlink
+            range             for a transponder
+        downlink_high:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the top of the downlink range for a transponder
+        downlink_drift:
+          type: integer
+          maximum: 99999
+          minimum: -99999
+          nullable: true
+          description: Transmitter drift from the published downlink frequency, stored
+            in             parts per billion (PPB)
+        mode:
+          type: integer
+          description: Returns downlink mode name
+          readOnly: true
+        mode_id:
+          type: integer
+          description: Returns downlink mode id
+          readOnly: true
+        uplink_mode:
+          type: integer
+          description: Returns uplink mode name
+          readOnly: true
+        invert:
+          type: boolean
+          description: True if this is an inverted transponder
+        baud:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+          description: The number of modulated symbols that the transmitter sends
+            every second
+        sat_id:
+          type: string
+          description: Returns Satellite NORAD ID
+          readOnly: true
+        norad_cat_id:
+          type: integer
+          format: int64
+          description: Returns Satellite NORAD ID
+          readOnly: true
+        norad_follow_id:
+          type: integer
+          format: int64
+          description: Returns Satellite NORAD ID following initial determination
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Functional state of this transmitter
+
+            * `active` - active
+            * `inactive` - inactive
+            * `invalid` - invalid
+        updated:
+          type: string
+          format: date-time
+        citation:
+          type: string
+          description: A reference (preferrably URL) for this entry or edit
+          maxLength: 512
+        service:
+          allOf:
+          - $ref: '#/components/schemas/ServiceEnum'
+          description: |-
+            The published usage category for this transmitter
+
+            * `Aeronautical` - Aeronautical
+            * `Amateur` - Amateur
+            * `Broadcasting` - Broadcasting
+            * `Earth Exploration` - Earth Exploration
+            * `Fixed` - Fixed
+            * `Inter-satellite` - Inter-satellite
+            * `Maritime` - Maritime
+            * `Meteorological` - Meteorological
+            * `Mobile` - Mobile
+            * `Radiolocation` - Radiolocation
+            * `Radionavigational` - Radionavigational
+            * `Space Operation` - Space Operation
+            * `Space Research` - Space Research
+            * `Standard Frequency and Time Signal` - Standard Frequency and Time Signal
+            * `Unknown` - Unknown
+        iaru_coordination:
+          allOf:
+          - $ref: '#/components/schemas/IaruCoordinationEnum'
+          description: |-
+            IARU frequency coordination status for this transmitter
+
+            * `IARU Coordinated` - IARU Coordinated
+            * `IARU Declined` - IARU Declined
+            * `IARU Uncoordinated` - IARU Uncoordinated
+            * `N/A` - N/A
+        iaru_coordination_url:
+          type: string
+          format: uri
+          description: URL for more details on this frequency coordination
+          maxLength: 200
+        itu_notification: {}
+        frequency_violation:
+          type: boolean
+          description: Returns if there is a frequency violation
+          readOnly: true
+        unconfirmed:
+          type: boolean
+          description: Returns whether transmitter is unconfirmed
+          readOnly: true
+      required:
+      - alive
+      - description
+      - frequency_violation
+      - mode
+      - mode_id
+      - norad_cat_id
+      - norad_follow_id
+      - sat_id
+      - unconfirmed
+      - updated
+      - uplink_mode
+      - uuid
+    TransmitterRequest:
+      type: object
+      description: SatNOGS DB Transmitter API Serializer
+      properties:
+        description:
+          type: string
+          minLength: 1
+          description: 'Short description for this entry, like: UHF 9k6 AFSK Telemetry'
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        uplink_low:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the uplink, or bottom of the uplink range
+            for a             transponder
+        uplink_high:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the top of the uplink range for a transponder
+        uplink_drift:
+          type: integer
+          maximum: 99999
+          minimum: -99999
+          nullable: true
+          description: Receiver drift from the published uplink frequency, stored
+            in parts             per billion (PPB)
+        downlink_low:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the downlink, or bottom of the downlink
+            range             for a transponder
+        downlink_high:
+          type: integer
+          maximum: 40000000000
+          minimum: 0
+          format: int64
+          nullable: true
+          description: Frequency (in Hz) for the top of the downlink range for a transponder
+        downlink_drift:
+          type: integer
+          maximum: 99999
+          minimum: -99999
+          nullable: true
+          description: Transmitter drift from the published downlink frequency, stored
+            in             parts per billion (PPB)
+        invert:
+          type: boolean
+          description: True if this is an inverted transponder
+        baud:
+          type: number
+          format: double
+          minimum: 0
+          nullable: true
+          description: The number of modulated symbols that the transmitter sends
+            every second
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Functional state of this transmitter
+
+            * `active` - active
+            * `inactive` - inactive
+            * `invalid` - invalid
+        updated:
+          type: string
+          format: date-time
+        citation:
+          type: string
+          minLength: 1
+          description: A reference (preferrably URL) for this entry or edit
+          maxLength: 512
+        service:
+          allOf:
+          - $ref: '#/components/schemas/ServiceEnum'
+          description: |-
+            The published usage category for this transmitter
+
+            * `Aeronautical` - Aeronautical
+            * `Amateur` - Amateur
+            * `Broadcasting` - Broadcasting
+            * `Earth Exploration` - Earth Exploration
+            * `Fixed` - Fixed
+            * `Inter-satellite` - Inter-satellite
+            * `Maritime` - Maritime
+            * `Meteorological` - Meteorological
+            * `Mobile` - Mobile
+            * `Radiolocation` - Radiolocation
+            * `Radionavigational` - Radionavigational
+            * `Space Operation` - Space Operation
+            * `Space Research` - Space Research
+            * `Standard Frequency and Time Signal` - Standard Frequency and Time Signal
+            * `Unknown` - Unknown
+        iaru_coordination:
+          allOf:
+          - $ref: '#/components/schemas/IaruCoordinationEnum'
+          description: |-
+            IARU frequency coordination status for this transmitter
+
+            * `IARU Coordinated` - IARU Coordinated
+            * `IARU Declined` - IARU Declined
+            * `IARU Uncoordinated` - IARU Uncoordinated
+            * `N/A` - N/A
+        iaru_coordination_url:
+          type: string
+          format: uri
+          description: URL for more details on this frequency coordination
+          maxLength: 200
+        itu_notification: {}
+      required:
+      - description
+      - updated
+    TypeEnum:
+      enum:
+      - Transmitter
+      - Transceiver
+      - Transponder
+      type: string
+      description: |-
+        * `Transmitter` - Transmitter
+        * `Transceiver` - Transceiver
+        * `Transponder` - Transponder
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
+servers:
+- url: https://db-dev.satnogs.org
+  description: Development server
+- url: https://db.satnogs.org
+  description: Production server
+tags:
+- name: artifacts
+  description: 'IN DEVELOPMENT (BETA): Artifacts are file-formatted objects                             collected
+    from a satellite observation.'
+- name: modes
+  description: Radio Frequency modulation modes (RF Modes) currently                             tracked
+    in the SatNOGS DB database
+  externalDocs:
+    description: RF Modes in SatNOGS Wiki
+    url: https://wiki.satnogs.org/Category:RF_Modes
+- name: satellites
+  description: Human-made orbital objects, typically with radio frequency                             transmitters
+    and/or reveivers
+- name: telemetry
+  description: Telemetry objects in the SatNOGS DB database are frames of                             data
+    collected from downlinked observations.
+- name: tle
+  description: The most recent two-line elements (TLE) in the SatNOGS DB database
+  externalDocs:
+    description: TLE Wikipedia doc
+    url: https://en.wikipedia.org/wiki/Two-line_element_set
+- name: transmitters
+  description: Radio Frequency (RF) transmitter entities in the SatNOGS DB                             database.
+    Transmitters in this case are inclusive of Transceivers                             and
+    Transponders
+externalDocs:
+  url: https://wiki.satnogs.org
+  description: SatNOGS Wiki
