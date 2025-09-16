@@ -6,5 +6,12 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
   },
-  "cSpell.words": ["CelesTrak", "COSPAR", "geolocation", "tles", "vike"]
+  "cSpell.words": [
+    "CelesTrak",
+    "COSPAR",
+    "geolocation",
+    "SatNOGS",
+    "tles",
+    "vike"
+  ]
 }
