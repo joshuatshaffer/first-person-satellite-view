@@ -3,6 +3,7 @@ import { matchSorter } from "match-sorter";
 import { tlesAtom } from "../../../satdb/tles";
 import { parseCosparIdFromTle } from "../../parseCosparIdFromTle";
 import { searchTextAtom, selectedSatelliteIdAtom } from "../../urlAtom";
+import { FilterForm } from "./FilterForm";
 import styles from "./Search.module.css";
 import { SearchInput } from "./SearchInput";
 
@@ -51,6 +52,7 @@ export function Search() {
   return (
     <div className={styles.search}>
       <SearchInput />
+      <FilterForm />
       <SearchResultList />
     </div>
   );

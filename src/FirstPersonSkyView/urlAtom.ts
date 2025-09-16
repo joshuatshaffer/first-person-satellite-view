@@ -5,11 +5,14 @@ export interface UrlState {
   highlightedSatelliteIds: string[];
 
   searchText: string;
+
+  filterRadioModes: string[];
 }
 
 const selectedSatelliteIdKey = "s";
 const highlightedSatelliteIdsKey = "h";
 const searchTextKey = "q";
+const filterRadioModesKey = "radio-mode";
 
 function readStateFromUrl(): UrlState {
   const searchParams = new URLSearchParams(window.location.search.slice(1));
@@ -20,6 +23,7 @@ function readStateFromUrl(): UrlState {
       searchParams.getAll(highlightedSatelliteIdsKey) || [],
 
     searchText: searchParams.get(searchTextKey) || "",
+    filterRadioModes: searchParams.getAll(filterRadioModesKey) || [],
   };
 }
 
@@ -36,6 +40,10 @@ function writeStateToUrl(state: UrlState) {
 
   if (state.searchText) {
     searchParams.set(searchTextKey, state.searchText);
+  }
+
+  for (const m of state.filterRadioModes.toSorted()) {
+    searchParams.append(filterRadioModesKey, m);
   }
 
   searchParams.sort();
@@ -83,5 +91,15 @@ export const searchTextAtom = atom(
   (_get, set, searchText: UrlState["searchText"]) =>
     set(urlStateAtom, (prev) =>
       prev.searchText === searchText ? prev : { ...prev, searchText }
+    )
+);
+
+export const filterRadioModesAtom = atom(
+  (get) => get(urlStateAtom).filterRadioModes,
+  (_get, set, filterRadioModes: UrlState["filterRadioModes"]) =>
+    set(urlStateAtom, (prev) =>
+      prev.filterRadioModes === filterRadioModes
+        ? prev
+        : { ...prev, filterRadioModes }
     )
 );
