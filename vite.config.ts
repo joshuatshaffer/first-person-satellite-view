@@ -28,6 +28,11 @@ export default defineConfig({
     target: "ES2020",
   },
 
+  build: {
+    // This code is open-source, so we might as well expose sourcemaps.
+    sourcemap: true,
+  },
+
   server: {
     host: "0.0.0.0",
   },
