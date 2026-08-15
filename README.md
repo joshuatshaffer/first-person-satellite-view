@@ -17,6 +17,10 @@
 - [Heavensat Web](https://1valdis.github.io/heavensat-web/)
   - First person view
   - Does not use device orientation.
+- [Sat Finder](https://satfinder.ca/)
+  - First person view.
+  - Uses device orientation and a camera passthrough for augmented reality.
+  - Only shows one satellite at a time.
 
 ## To Do
 
