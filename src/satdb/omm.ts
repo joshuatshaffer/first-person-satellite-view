@@ -4,6 +4,8 @@ import { daysToMs } from "./ms";
 
 const tleUrl =
   "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle";
+const ommJsonUrl =
+  "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
 
 /**
  * CelesTrak updates the TLEs at most every 2 hours.
