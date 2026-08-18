@@ -1,6 +1,6 @@
 import { atom, useAtom, useAtomValue } from "jotai";
 import { matchSorter } from "match-sorter";
-import { tlesAtom } from "../../../satdb/tles";
+import { tlesAtom } from "../../../satdb/omm";
 import { parseCosparIdFromTle } from "../../parseCosparIdFromTle";
 import { searchTextAtom, selectedSatelliteIdAtom } from "../../urlAtom";
 import styles from "./Search.module.css";

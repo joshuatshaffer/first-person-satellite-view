@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import * as satellite from "satellite.js";
 import { NoradId } from "../satdb/db";
-import { tlesAtom } from "../satdb/tles";
+import { tlesAtom } from "../satdb/omm";
 
 export type Tle = [line1: string, line2: string];
 
