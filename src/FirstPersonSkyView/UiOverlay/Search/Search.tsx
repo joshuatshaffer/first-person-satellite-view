@@ -6,17 +6,9 @@ import styles from "./Search.module.css";
 import { SearchInput } from "./SearchInput";
 
 export const searchResultsAtom = atom((get) =>
-  matchSorter(
-    get(ommsAtom).map((omm) => ({
-      ...omm,
-      noradId: omm.NORAD_CAT_ID.toString(),
-      cosparId: omm.OBJECT_ID,
-    })),
-    get(searchTextAtom),
-    {
-      keys: ["OBJECT_NAME", "noradId", "cosparId"],
-    },
-  ),
+  matchSorter(get(ommsAtom), get(searchTextAtom), {
+    keys: ["OBJECT_NAME", "NORAD_CAT_ID", "OBJECT_ID"],
+  }),
 );
 
 function SearchResultList() {
@@ -27,18 +19,18 @@ function SearchResultList() {
 
   return (
     <ul className={styles.searchResults}>
-      {results.slice(0, 30).map(({ noradId, OBJECT_NAME }) => {
+      {results.slice(0, 30).map(({ NORAD_CAT_ID, OBJECT_NAME }) => {
         return (
           <li
-            key={noradId}
+            key={NORAD_CAT_ID}
             className={styles.searchResult}
-            data-selected={selectedSatelliteId === noradId}
+            data-selected={selectedSatelliteId === "" + NORAD_CAT_ID}
             onClick={() => {
-              setSelectedSatelliteId(noradId);
+              setSelectedSatelliteId("" + NORAD_CAT_ID);
             }}
           >
             <div className={styles.searchResult_objectName}>{OBJECT_NAME}</div>
-            <div>{noradId}</div>
+            <div>{NORAD_CAT_ID}</div>
           </li>
         );
       })}

@@ -27,11 +27,11 @@ export function SatelliteDetails() {
   return (
     <div className={styles.satelliteDetails}>
       <span>
-        {definition?.displayName ?? `Satellite ${selectedSatelliteId}`}
+        {definition?.OBJECT_NAME ?? `Satellite ${selectedSatelliteId}`}
       </span>
       <div>NORAD ID: {selectedSatelliteId}</div>
-      {definition?.cosparId ? (
-        <div>COSPAR ID: {definition.cosparId}</div>
+      {definition?.OBJECT_ID ? (
+        <div>COSPAR ID: {definition.OBJECT_ID}</div>
       ) : null}
       <HighlightedToggle satelliteId={selectedSatelliteId} />
       <ExternalLinks satelliteId={selectedSatelliteId} />

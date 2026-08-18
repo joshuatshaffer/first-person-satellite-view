@@ -33,8 +33,8 @@ export function satelliteAtPointer({
 
   const positionInNdc = new Vector3();
 
-  for (const { noradId } of store.get(searchResultsAtom)) {
-    const i = satellitePositions.idToIndex.get(noradId);
+  for (const { NORAD_CAT_ID } of store.get(searchResultsAtom)) {
+    const i = satellitePositions.idToIndex.get("" + NORAD_CAT_ID);
     if (i === undefined) {
       continue;
     }
@@ -62,7 +62,7 @@ export function satelliteAtPointer({
 
     if (distanceSq < maxDistanceSq && distanceSq < closestDistanceSq) {
       closestDistanceSq = distanceSq;
-      closestId = noradId;
+      closestId = "" + NORAD_CAT_ID;
     }
   }
 

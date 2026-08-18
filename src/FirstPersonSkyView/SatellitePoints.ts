@@ -50,7 +50,9 @@ export function makeSatellitePoints(
       store.get(highlightedSatelliteIdsAtom),
     );
 
-    const results = new Set(store.get(searchResultsAtom).map((x) => x.noradId));
+    const results = new Set(
+      store.get(searchResultsAtom).map((x) => "" + x.NORAD_CAT_ID),
+    );
 
     for (const [index, id] of satellitePositions.indexToId.entries()) {
       points.geometry.attributes.color.array.set(

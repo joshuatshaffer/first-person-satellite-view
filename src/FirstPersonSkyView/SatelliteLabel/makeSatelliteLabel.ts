@@ -35,7 +35,7 @@ export function makeSatelliteLabel(
     }
 
     label.visible = true;
-    label.element.textContent = definition.displayName;
+    label.element.textContent = definition.OBJECT_NAME;
     label.position.set(
       satellitePositions.scenePositions[index * 3],
       satellitePositions.scenePositions[index * 3 + 1],

@@ -81,7 +81,7 @@ export function makeSatelliteOffscreenPointer({
 
     const pointingLeft = angle > Math.PI / 2 || angle < -Math.PI / 2;
 
-    label.textContent = definition.displayName;
+    label.textContent = definition.OBJECT_NAME;
 
     rootElement.dataset.pointing = pointingLeft ? "left" : "right";
     rootElement.dataset.behindCamera = satelliteBehindCamera ? "true" : "false";
