@@ -8,7 +8,7 @@ import styles from "../SkyViewRenderer.module.css";
 export function makeSatelliteLabel(
   scene: Scene,
   satellitePositions: SatellitePositions,
-  store: Store
+  store: Store,
 ) {
   const text = document.createElement("div");
   text.className = styles.label;
@@ -39,7 +39,7 @@ export function makeSatelliteLabel(
     label.position.set(
       satellitePositions.scenePositions[index * 3],
       satellitePositions.scenePositions[index * 3 + 1],
-      satellitePositions.scenePositions[index * 3 + 2]
+      satellitePositions.scenePositions[index * 3 + 2],
     );
   };
 

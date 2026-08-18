@@ -71,7 +71,7 @@ export function startSkyViewRenderer({
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
 
   const onClick = (pointerPosition: PointerPosition) => {
@@ -83,7 +83,7 @@ export function startSkyViewRenderer({
         camera,
         canvas,
         store,
-      })
+      }),
     );
   };
 
@@ -112,7 +112,7 @@ export function startSkyViewRenderer({
     updateActiveControls();
     const unsubscribeViewControlModeAtom = store.sub(
       viewControlModeAtom,
-      updateActiveControls
+      updateActiveControls,
     );
 
     lifeCycleCallbacks.push({
@@ -144,12 +144,12 @@ export function startSkyViewRenderer({
             camera.rotation.x +
               ((to.offsetY - from.offsetY) / window.innerHeight) * scale,
             minElevation,
-            maxElevation
+            maxElevation,
           ),
           camera.rotation.y +
             ((to.offsetX - from.offsetX) / window.innerWidth) * scale,
           0,
-          "YXZ"
+          "YXZ",
         );
       } else if (viewControlMode === "look") {
         const scale =
@@ -160,12 +160,12 @@ export function startSkyViewRenderer({
             camera.rotation.x -
               ((to.offsetY - from.offsetY) / window.innerHeight) * scale,
             minElevation,
-            maxElevation
+            maxElevation,
           ),
           camera.rotation.y -
             ((to.offsetX - from.offsetX) / window.innerWidth) * scale,
           0,
-          "YXZ"
+          "YXZ",
         );
       }
 
@@ -260,7 +260,7 @@ export function startSkyViewRenderer({
     const selectedSatelliteLabel = makeSatelliteLabel(
       scene,
       satellitePositions,
-      store
+      store,
     );
     lifeCycleCallbacks.push({
       update: () => {
@@ -279,7 +279,7 @@ export function startSkyViewRenderer({
     lifeCycleCallbacks.push({
       update: () => {
         selectedSatelliteOffscreenPointer.update(
-          store.get(selectedSatelliteIdAtom)
+          store.get(selectedSatelliteIdAtom),
         );
       },
       dispose: () => {

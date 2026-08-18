@@ -8,14 +8,14 @@ import { wrap } from "../wrap";
 
 function deviceCoordinatesToLookAngles(
   camera: PerspectiveCamera,
-  deviceCoordinates: Vector3
+  deviceCoordinates: Vector3,
 ) {
   const direction = deviceCoordinates.clone().unproject(camera).normalize();
 
   const azimuth = wrap(
     Math.PI - Math.atan2(direction.x, direction.z),
     0,
-    Math.PI * 2
+    Math.PI * 2,
   );
   const elevation = Math.asin(direction.y);
 
@@ -47,23 +47,23 @@ export function makeGridLabels(gridRoot: Object3D, camera: PerspectiveCamera) {
           const elevation =
             Math.floor(
               Math.max(testPoint.elevation, prevTestPoint.elevation) /
-                elevationStep
+                elevationStep,
             ) * elevationStep;
           const r = findRoot(
             (y) =>
               deviceCoordinatesToLookAngles(camera, xToDc(y)).elevation -
               elevation,
             prevX,
-            x
+            x,
           );
 
           labelPool.place(
             lookAnglesToPosition(
               deviceCoordinatesToLookAngles(camera, xToDc(r)),
-              radii.gridLabel
+              radii.gridLabel,
             ),
             radToDeg(elevation).toFixed(0) + "°",
-            center
+            center,
           );
         }
 
@@ -74,13 +74,13 @@ export function makeGridLabels(gridRoot: Object3D, camera: PerspectiveCamera) {
         ) {
           const azimuth =
             Math.floor(
-              Math.max(testPoint.azimuth, prevTestPoint.azimuth) / azimuthStep
+              Math.max(testPoint.azimuth, prevTestPoint.azimuth) / azimuthStep,
             ) * azimuthStep;
           const r = findRoot(
             (y) =>
               deviceCoordinatesToLookAngles(camera, xToDc(y)).azimuth - azimuth,
             prevX,
-            x
+            x,
           );
 
           /**
@@ -93,17 +93,17 @@ export function makeGridLabels(gridRoot: Object3D, camera: PerspectiveCamera) {
             Math.abs(testPoint.azimuth - prevTestPoint.azimuth) > Math.PI
               ? Math.floor(
                   Math.min(testPoint.azimuth, prevTestPoint.azimuth) /
-                    azimuthStep
+                    azimuthStep,
                 ) * azimuthStep
               : azimuth;
 
           labelPool.place(
             lookAnglesToPosition(
               deviceCoordinatesToLookAngles(camera, xToDc(r)),
-              radii.gridLabel
+              radii.gridLabel,
             ),
             radToDeg(labelValue).toFixed(0) + "°",
-            center
+            center,
           );
         }
 
@@ -128,7 +128,7 @@ function findRoot(
   x0: number,
   x1: number,
   epsilon = 0.0001,
-  maxIterations = 100
+  maxIterations = 100,
 ) {
   let y0 = f(x0);
   let x = (x0 + x1) / 2;

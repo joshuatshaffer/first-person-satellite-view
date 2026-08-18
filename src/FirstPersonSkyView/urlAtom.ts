@@ -43,7 +43,7 @@ function writeStateToUrl(state: UrlState) {
   window.history.replaceState(
     null,
     "",
-    searchString ? `?${searchString}` : "."
+    searchString ? `?${searchString}` : ".",
   );
 }
 
@@ -55,7 +55,7 @@ const urlStateAtom: PrimitiveAtom<UrlState> = atom(
   (get, set, update) => {
     set(internalUrlStateAtom, update);
     writeStateToUrl(get(internalUrlStateAtom));
-  }
+  },
 );
 
 export const selectedSatelliteIdAtom = atom(
@@ -64,8 +64,8 @@ export const selectedSatelliteIdAtom = atom(
     set(urlStateAtom, (prev) =>
       prev.selectedSatelliteId === selectedSatelliteId
         ? prev
-        : { ...prev, selectedSatelliteId }
-    )
+        : { ...prev, selectedSatelliteId },
+    ),
 );
 
 export const highlightedSatelliteIdsAtom = atom(
@@ -74,14 +74,14 @@ export const highlightedSatelliteIdsAtom = atom(
     set(urlStateAtom, (prev) =>
       prev.highlightedSatelliteIds === highlightedSatelliteIds
         ? prev
-        : { ...prev, highlightedSatelliteIds }
-    )
+        : { ...prev, highlightedSatelliteIds },
+    ),
 );
 
 export const searchTextAtom = atom(
   (get) => get(urlStateAtom).searchText,
   (_get, set, searchText: UrlState["searchText"]) =>
     set(urlStateAtom, (prev) =>
-      prev.searchText === searchText ? prev : { ...prev, searchText }
-    )
+      prev.searchText === searchText ? prev : { ...prev, searchText },
+    ),
 );

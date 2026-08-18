@@ -71,7 +71,7 @@ function update() {
 
     satellitePositions.scenePositions.set(
       lookAnglesToPosition(lookAngles, radii.satellitePoint).toArray(),
-      index * 3
+      index * 3,
     );
 
     satellitePositions.indexToId.set(index, id);

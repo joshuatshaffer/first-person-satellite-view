@@ -5,7 +5,7 @@ import { clientOnly } from "vike-react/clientOnly";
 const FirstPersonSkyView = clientOnly(
   async () =>
     (await import("../../FirstPersonSkyView/FirstPersonSkyView"))
-      .FirstPersonSkyView
+      .FirstPersonSkyView,
 );
 
 export function Page() {

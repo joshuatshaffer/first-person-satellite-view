@@ -22,11 +22,11 @@ const fullscreenElementAtom = atom(
     } else {
       return document.exitFullscreen();
     }
-  }
+  },
 );
 
 export const fullscreenBodyAtom = atom(
   (get) => get(fullscreenElementAtom) === document.body,
   (_get, set, isFullscreen: boolean) =>
-    set(fullscreenElementAtom, isFullscreen ? document.body : null)
+    set(fullscreenElementAtom, isFullscreen ? document.body : null),
 );

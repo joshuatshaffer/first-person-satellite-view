@@ -35,8 +35,8 @@ async function putTles(tles: Tle[]) {
         .clear("tle")
         .then(() =>
           Promise.all(
-            tles.map((tle) => tx.db.put("tle", tle, tle.line1.slice(2, 7)))
-          )
+            tles.map((tle) => tx.db.put("tle", tle, tle.line1.slice(2, 7))),
+          ),
         ),
       tx.db.put("dataSync", new Date(), "tle"),
       tx.done,

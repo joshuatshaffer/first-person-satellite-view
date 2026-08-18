@@ -21,7 +21,7 @@ export type InputState = ReturnType<
 
 export function makeInputs(
   canvas: HTMLCanvasElement,
-  handlers: InputEventHandlers
+  handlers: InputEventHandlers,
 ) {
   /**
    * The pointers that are currently hovering over the canvas in the order they
@@ -54,7 +54,7 @@ export function makeInputs(
   const onPointerMove = (event: PointerEvent) => {
     {
       const downPointer = downPointers.find(
-        (p) => p.pointerId === event.pointerId
+        (p) => p.pointerId === event.pointerId,
       );
       if (downPointer) {
         let ignore = false;
@@ -93,7 +93,7 @@ export function makeInputs(
 
     {
       const hoveringPointer = hoveringPointers.find(
-        (p) => p.pointerId === event.pointerId
+        (p) => p.pointerId === event.pointerId,
       );
       if (hoveringPointer) {
         hoveringPointer.offsetX = event.offsetX;
@@ -111,13 +111,13 @@ export function makeInputs(
 
   const onPointerLeave = (event: PointerEvent) => {
     hoveringPointers = hoveringPointers.filter(
-      (p) => p.pointerId !== event.pointerId
+      (p) => p.pointerId !== event.pointerId,
     );
   };
 
   const onPointerDown = (event: PointerEvent) => {
     hoveringPointers = hoveringPointers.filter(
-      (p) => p.pointerId !== event.pointerId
+      (p) => p.pointerId !== event.pointerId,
     );
 
     if (event.button !== 0) {

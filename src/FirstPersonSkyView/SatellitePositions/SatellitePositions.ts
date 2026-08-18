@@ -17,7 +17,7 @@ export function makeSatellitePositions(store: Store) {
     disposeCallbacks.push(
       store.sub(atom, () => {
         update(store.get(atom));
-      })
+      }),
     );
     update(store.get(atom));
   };
@@ -75,7 +75,7 @@ export function makeSatellitePositions(store: Store) {
     dependents: new Set<{ needsUpdate: boolean }>(),
 
     scenePositions: new Float32Array(
-      3 * store.get(satelliteDefinitionsAtom).records.size
+      3 * store.get(satelliteDefinitionsAtom).records.size,
     ),
     indexToId: new Map<number, string>(),
     idToIndex: new Map<string, number>(),

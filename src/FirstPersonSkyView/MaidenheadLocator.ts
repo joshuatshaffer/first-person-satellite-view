@@ -11,7 +11,7 @@ import { wrap } from "./wrap";
  */
 export function coordinatesToGridCode(
   { latitude, longitude }: { latitude: number; longitude: number },
-  precision: number = 3
+  precision: number = 3,
 ): string {
   let lat = clamp(latitude + 90, 0, 180) / 10 + 0.0000001;
   let lon = wrap(longitude + 180, 0, 360) / 20 + 0.0000001;

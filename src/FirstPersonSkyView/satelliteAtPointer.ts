@@ -43,7 +43,7 @@ export function satelliteAtPointer({
       .set(
         satellitePositions.scenePositions[i * 3],
         satellitePositions.scenePositions[i * 3 + 1],
-        satellitePositions.scenePositions[i * 3 + 2]
+        satellitePositions.scenePositions[i * 3 + 2],
       )
       .applyMatrix4(sceneSpaceToNdc);
 

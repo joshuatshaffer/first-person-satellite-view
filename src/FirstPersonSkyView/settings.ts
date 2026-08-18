@@ -10,7 +10,7 @@ export type BackgroundSetting = (typeof backgroundSettingValues)[number];
 
 export const backgroundSettingAtom = atomWithStorage<BackgroundSetting>(
   localStoragePrefix + "background",
-  "none"
+  "none",
 );
 
 export const viewControlModes = ["drag", "look", "deviceOrientation"] as const;
@@ -18,17 +18,17 @@ export type ViewControlMode = (typeof viewControlModes)[number];
 
 export const viewControlModeAtom = atomWithStorage<ViewControlMode>(
   localStoragePrefix + "view-control",
-  "drag"
+  "drag",
 );
 
 export const dragScaleAtom = atomWithStorage(
   localStoragePrefix + "drag-scale",
-  1
+  1,
 );
 
 export const lookScaleAtom = atomWithStorage(
   localStoragePrefix + "look-scale",
-  4
+  4,
 );
 
 export const observerPositionModes = ["currentPosition", "manual"] as const;
@@ -36,7 +36,7 @@ export type ObserverPositionMode = (typeof observerPositionModes)[number];
 
 export const observerPositionModeAtom = atomWithStorage<ObserverPositionMode>(
   localStoragePrefix + "observer-position-mode",
-  "currentPosition"
+  "currentPosition",
 );
 
 const observerPositionSavedAtom = atomWithStorage<{
@@ -64,7 +64,7 @@ geolocationAtom.onMount = (set) => {
     },
     {
       enableHighAccuracy: true,
-    }
+    },
   );
 
   return () => {
@@ -100,7 +100,7 @@ export const observerPositionAtom = atom(
   (get, set, update: (prev: ObserverPosition) => ObserverPosition) => {
     set(observerPositionSavedAtom, update(get(observerPositionAtom)));
     set(observerPositionModeAtom, "manual");
-  }
+  },
 );
 
 export const observerGdAtom = atom<satellite.GeodeticLocation>((get) => {

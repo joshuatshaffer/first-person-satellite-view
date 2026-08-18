@@ -20,7 +20,7 @@ const notInResultsColor = new Color("#222").toArray();
 
 export function makeSatellitePoints(
   store: Store,
-  satellitePositions: SatellitePositions
+  satellitePositions: SatellitePositions,
 ) {
   const points = new Points(
     new BufferGeometry(),
@@ -28,26 +28,26 @@ export function makeSatellitePoints(
       size: 2,
       sizeAttenuation: false,
       vertexColors: true,
-    })
+    }),
   );
 
   points.geometry.setAttribute(
     "position",
-    new BufferAttribute(satellitePositions.scenePositions, 3)
+    new BufferAttribute(satellitePositions.scenePositions, 3),
   );
   points.geometry.setAttribute(
     "color",
     new BufferAttribute(
       new Float32Array(satellitePositions.scenePositions.length),
-      3
-    )
+      3,
+    ),
   );
   points.geometry.setDrawRange(0, satellitePositions.indexToId.size);
 
   const updateColors = () => {
     const selectedId = store.get(selectedSatelliteIdAtom);
     const highlightedSatelliteIds = new Set(
-      store.get(highlightedSatelliteIdsAtom)
+      store.get(highlightedSatelliteIdsAtom),
     );
 
     const results = new Set(store.get(searchResultsAtom).map((x) => x.noradId));
@@ -61,7 +61,7 @@ export function makeSatellitePoints(
             : results.has(id)
               ? inResultsColor
               : notInResultsColor,
-        index * 3
+        index * 3,
       );
     }
 
@@ -70,15 +70,15 @@ export function makeSatellitePoints(
   updateColors();
   const unsubscribeSearchResultsAtom = store.sub(
     searchResultsAtom,
-    updateColors
+    updateColors,
   );
   const unsubscribeSelectedSatelliteIdAtom = store.sub(
     selectedSatelliteIdAtom,
-    updateColors
+    updateColors,
   );
   const unsubscribeHighlightedSatelliteIdsAtom = store.sub(
     highlightedSatelliteIdsAtom,
-    updateColors
+    updateColors,
   );
 
   const dependencyRef = {
@@ -112,14 +112,14 @@ export function makeSatellitePoints(
       points.geometry = new BufferGeometry();
       points.geometry.setAttribute(
         "position",
-        new BufferAttribute(satellitePositions.scenePositions, 3)
+        new BufferAttribute(satellitePositions.scenePositions, 3),
       );
       points.geometry.setAttribute(
         "color",
         new BufferAttribute(
           new Float32Array(satellitePositions.scenePositions.length),
-          3
-        )
+          3,
+        ),
       );
 
       updateColors();

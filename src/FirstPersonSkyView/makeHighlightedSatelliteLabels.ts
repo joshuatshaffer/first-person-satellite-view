@@ -30,7 +30,7 @@ export function makeHighlightedSatelliteLabels({
 
   const highlightedSatelliteLabels = Array.from(
     { length: store.get(highlightedSatelliteIdsAtom).length },
-    makeHighlightedSatelliteLabel
+    makeHighlightedSatelliteLabel,
   );
 
   const update = () => {

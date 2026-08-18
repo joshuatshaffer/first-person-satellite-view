@@ -13,7 +13,7 @@ export function CameraPassthrough() {
   const stream = useAsync(getStream);
 
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
-    null
+    null,
   );
 
   const visibilityState = useVisibilityState();

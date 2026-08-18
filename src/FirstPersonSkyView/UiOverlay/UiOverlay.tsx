@@ -40,7 +40,7 @@ export function UiOverlay() {
             >
               {icon}
             </button>
-          )
+          ),
         )}
       </div>
       {activeTab ? tabs[activeTab].panel : null}

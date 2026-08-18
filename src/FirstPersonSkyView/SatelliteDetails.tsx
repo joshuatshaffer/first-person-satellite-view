@@ -43,7 +43,7 @@ export function SatelliteDetails() {
 
 function HighlightedToggle({ satelliteId }: { satelliteId: string }) {
   const [highlightedSatelliteIds, setHighlightedSatelliteIds] = useAtom(
-    highlightedSatelliteIdsAtom
+    highlightedSatelliteIdsAtom,
   );
 
   const isHighlighted = highlightedSatelliteIds.includes(satelliteId);
@@ -53,11 +53,11 @@ function HighlightedToggle({ satelliteId }: { satelliteId: string }) {
       setHighlightedSatelliteIds(
         highlightedSatelliteIds.includes(satelliteId)
           ? highlightedSatelliteIds
-          : [...highlightedSatelliteIds, satelliteId]
+          : [...highlightedSatelliteIds, satelliteId],
       );
     } else {
       setHighlightedSatelliteIds(
-        highlightedSatelliteIds.filter((id) => id !== satelliteId)
+        highlightedSatelliteIds.filter((id) => id !== satelliteId),
       );
     }
   };

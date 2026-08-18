@@ -21,7 +21,7 @@ export function makeDeviceOrientationControls(camera: Camera) {
     disable: () => {
       window.removeEventListener(
         "deviceorientationabsolute",
-        onDeviceOrientation
+        onDeviceOrientation,
       );
       deviceOrientation = undefined;
     },
@@ -31,7 +31,7 @@ export function makeDeviceOrientationControls(camera: Camera) {
         deviceOrientationToCameraQuaternion(
           deviceOrientation,
           window.screen.orientation,
-          camera.quaternion
+          camera.quaternion,
         );
       }
     },

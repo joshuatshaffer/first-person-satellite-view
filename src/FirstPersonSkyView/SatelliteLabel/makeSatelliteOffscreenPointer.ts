@@ -50,7 +50,7 @@ export function makeSatelliteOffscreenPointer({
       .set(
         satellitePositions.scenePositions[index * 3],
         satellitePositions.scenePositions[index * 3 + 1],
-        satellitePositions.scenePositions[index * 3 + 2]
+        satellitePositions.scenePositions[index * 3 + 2],
       )
       .project(camera);
 

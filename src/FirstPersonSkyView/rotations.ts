@@ -18,18 +18,18 @@ export function deviceOrientationToEuler(orientation: DeviceOrientation) {
     degToRad(orientation.beta ?? 0),
     degToRad(orientation.gamma ?? 0),
     degToRad(orientation.alpha ?? 0),
-    "ZXY"
+    "ZXY",
   );
 }
 
 const devicePhysicalCameraQuaternion = Object.freeze(
-  new Quaternion().setFromEuler(new Euler(degToRad(-90), 0, 0, "XYZ"))
+  new Quaternion().setFromEuler(new Euler(degToRad(-90), 0, 0, "XYZ")),
 );
 
 export function deviceOrientationToCameraQuaternion(
   orientation: DeviceOrientation,
   screenOrientation?: ScreenOrientation,
-  quaternion = new Quaternion()
+  quaternion = new Quaternion(),
 ) {
   quaternion.setFromEuler(deviceOrientationToEuler(orientation));
 
@@ -39,8 +39,8 @@ export function deviceOrientationToCameraQuaternion(
   if (screenAngle !== undefined && screenAngle !== 0) {
     quaternion.multiply(
       new Quaternion().setFromEuler(
-        new Euler(0, 0, -degToRad(screenAngle), "XYZ")
-      )
+        new Euler(0, 0, -degToRad(screenAngle), "XYZ"),
+      ),
     );
   }
 

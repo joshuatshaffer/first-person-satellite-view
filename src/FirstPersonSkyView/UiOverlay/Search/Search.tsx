@@ -16,14 +16,14 @@ export const searchResultsAtom = atom((get) =>
     get(searchTextAtom),
     {
       keys: ["objectName", "noradId", "cosparId"],
-    }
-  )
+    },
+  ),
 );
 
 function SearchResultList() {
   const results = useAtomValue(searchResultsAtom);
   const [selectedSatelliteId, setSelectedSatelliteId] = useAtom(
-    selectedSatelliteIdAtom
+    selectedSatelliteIdAtom,
   );
 
   return (

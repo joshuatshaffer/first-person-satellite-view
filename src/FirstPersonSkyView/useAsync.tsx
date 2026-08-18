@@ -7,7 +7,7 @@ export interface PromisePendingStatus {
 export type PromiseStatus<T> = PromisePendingStatus | PromiseSettledResult<T>;
 
 export function useAsync<T>(
-  fn: (args: { signal: AbortSignal }) => PromiseLike<T>
+  fn: (args: { signal: AbortSignal }) => PromiseLike<T>,
 ) {
   const [status, setStatus] = useState<PromiseStatus<T>>({ status: "pending" });
 
@@ -29,7 +29,7 @@ export function useAsync<T>(
           }
 
           setStatus({ status: "rejected", reason });
-        }
+        },
       );
     } catch (error) {
       setStatus({ status: "rejected", reason: error });

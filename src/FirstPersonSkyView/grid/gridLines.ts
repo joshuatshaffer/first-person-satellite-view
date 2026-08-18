@@ -21,9 +21,9 @@ export function makeGridLines(gridRoot: Object3D) {
       return new Vector3(
         Math.cos(theta) * radii.gridLine,
         0,
-        Math.sin(theta) * radii.gridLine
+        Math.sin(theta) * radii.gridLine,
       );
-    })
+    }),
   );
 
   const majorElevationLineDeg = 30;
@@ -38,7 +38,7 @@ export function makeGridLines(gridRoot: Object3D) {
       loop,
       elevationDeg % majorElevationLineDeg === 0
         ? majorLineMaterial
-        : minorLineMaterial
+        : minorLineMaterial,
     );
 
     const scale = Math.cos(elevation);
@@ -60,7 +60,7 @@ export function makeGridLines(gridRoot: Object3D) {
       loop,
       azimuthDeg % majorAzimuthLineDeg === 0
         ? majorLineMaterial
-        : minorLineMaterial
+        : minorLineMaterial,
     );
 
     line.rotation.x = degToRad(90);
