@@ -1,9 +1,13 @@
 import { atom } from "jotai";
+import localDataUrl from "../generated/omm.json?url&no-inline";
 import { getDb, Omm, withDb } from "./db";
 import { daysToMs } from "./ms";
 
-const ommJsonUrl =
-  "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
+const useLocalData = true;
+
+const ommJsonUrl = useLocalData
+  ? localDataUrl
+  : "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
 
 /**
  * CelesTrak updates the OMM data at most every 2 hours.
