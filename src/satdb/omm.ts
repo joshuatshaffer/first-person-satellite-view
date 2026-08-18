@@ -10,9 +10,27 @@ const ommJsonUrl =
  */
 const ommMaxAgeMs = 1 * daysToMs;
 
-async function fetchOmms({ signal }: { signal?: AbortSignal } = {}) {
-  const response = await fetch(ommJsonUrl, { signal });
-  return (await response.json()) as Omm[];
+let celestrakError: unknown = null;
+
+async function fetchOmms({ signal }: { signal?: AbortSignal } = {}): Promise<
+  Omm[]
+> {
+  if (celestrakError) {
+    throw celestrakError;
+  }
+
+  try {
+    const response = await fetch(ommJsonUrl, { signal });
+
+    if (!response.ok) {
+      throw new Error("Got non-success status " + response.status);
+    }
+
+    return await response.json();
+  } catch (err) {
+    celestrakError = err;
+    throw err;
+  }
 }
 
 async function putOmms(omms: Omm[]) {
