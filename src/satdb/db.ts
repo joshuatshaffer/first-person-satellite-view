@@ -3,15 +3,6 @@ import { DBSchema, IDBPDatabase, openDB } from "idb";
 export type NoradId = string;
 
 /**
- * Two/Three Line Element
- */
-export interface Tle {
-  objectName: string;
-  line1: string;
-  line2: string;
-}
-
-/**
  * Orbit Mean Elements Message
  */
 export interface Omm {
@@ -32,13 +23,16 @@ export interface Omm {
   EPHEMERIS_TYPE?: 0 | undefined;
   CLASSIFICATION_TYPE?: "U" | "C" | undefined;
   REV_AT_EPOCH?: number | undefined;
+  /**
+   * Additional metadata fields, such as OBJECT_TYPE, COUNTRY_CODE, etc.
+   */
+  [key: string]: unknown;
 }
 
-export type DataSyncKey = "tle";
+export type DataSyncKey = "omm";
 
 interface SatDbSchema extends DBSchema {
   dataSync: { value: Date; key: DataSyncKey };
-  tle: { value: Tle; key: NoradId };
   omm: { value: Omm; key: NoradId };
 }
 
@@ -49,10 +43,17 @@ export interface Db extends IDBPDatabase<SatDbSchema> {}
 // TODO: Reuse the database connection if `getDb` is called multiple times
 //       before closing.
 export async function getDb() {
-  return await openDB<SatDbSchema>("sat-db", 1, {
+  return await openDB<SatDbSchema>("sat-db", 2, {
     upgrade(db) {
-      db.createObjectStore("dataSync");
-      db.createObjectStore("tle");
+      if (!db.objectStoreNames.contains("dataSync")) {
+        db.createObjectStore("dataSync");
+      }
+      if ((db.objectStoreNames as unknown as string[]).includes("tle")) {
+        db.deleteObjectStore("tle" as never);
+      }
+      if (!db.objectStoreNames.contains("omm")) {
+        db.createObjectStore("omm");
+      }
     },
   });
 }

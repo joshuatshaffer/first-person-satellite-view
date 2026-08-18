@@ -1,46 +1,35 @@
 import { atom } from "jotai";
-import { getDb, Tle, withDb } from "./db";
+import { getDb, Omm, withDb } from "./db";
 import { daysToMs } from "./ms";
 
-const tleUrl =
-  "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle";
 const ommJsonUrl =
   "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
 
 /**
- * CelesTrak updates the TLEs at most every 2 hours.
+ * CelesTrak updates the OMM data at most every 2 hours.
  */
-const tleMaxAgeMs = 1 * daysToMs;
+const ommMaxAgeMs = 1 * daysToMs;
 
-async function fetchTles({ signal }: { signal?: AbortSignal } = {}) {
-  const response = await fetch(tleUrl, { signal });
-  const body = await response.text();
-  const lines = body.split("\n");
-  const tles: Tle[] = [];
-
-  for (let i = 0; i < lines.length - 2; i += 3) {
-    tles.push({
-      objectName: lines[i].trim(),
-      line1: lines[i + 1],
-      line2: lines[i + 2],
-    });
-  }
-  return tles;
+async function fetchOmms({ signal }: { signal?: AbortSignal } = {}) {
+  const response = await fetch(ommJsonUrl, { signal });
+  return (await response.json()) as Omm[];
 }
 
-async function putTles(tles: Tle[]) {
+async function putOmms(omms: Omm[]) {
   const db = await getDb();
   try {
-    const tx = db.transaction(["tle", "dataSync"], "readwrite");
+    const tx = db.transaction(["omm", "dataSync"], "readwrite");
     await Promise.all([
       tx.db
-        .clear("tle")
+        .clear("omm")
         .then(() =>
           Promise.all(
-            tles.map((tle) => tx.db.put("tle", tle, tle.line1.slice(2, 7))),
+            omms.map((omm) =>
+              tx.db.put("omm", omm, omm.NORAD_CAT_ID.toString()),
+            ),
           ),
         ),
-      tx.db.put("dataSync", new Date(), "tle"),
+      tx.db.put("dataSync", new Date(), "omm"),
       tx.done,
     ]);
   } finally {
@@ -48,26 +37,26 @@ async function putTles(tles: Tle[]) {
   }
 }
 
-export const tlesAtom = atom<Tle[]>([]);
+export const ommsAtom = atom<Omm[]>([]);
 
-tlesAtom.onMount = (setAtom) => {
+ommsAtom.onMount = (setAtom) => {
   const abortController = new AbortController();
   const signal = abortController.signal;
   let nextSyncTimeout: ReturnType<typeof setTimeout> | undefined;
 
   const sync = async () => {
     try {
-      const tles = await fetchTles({ signal });
+      const omms = await fetchOmms({ signal });
 
-      // Do not wait for the update to complete before returning the TLEs so
+      // Do not wait for the update to complete before returning the OMMs so
       // that the UI updates faster.
-      putTles(tles).catch((error) => {
-        console.error("Failed to save TLEs to IndexedDB", error);
+      putOmms(omms).catch((error) => {
+        console.error("Failed to save OMMs to IndexedDB", error);
       });
 
-      setAtom(tles);
+      setAtom(omms);
     } catch (error) {
-      console.error("Failed to fetch TLEs", error);
+      console.error("Failed to fetch OMMs", error);
     }
 
     if (!signal.aborted) {
@@ -77,18 +66,18 @@ tlesAtom.onMount = (setAtom) => {
 
   const scheduleNextSync = async () => {
     // When the data is more than 2 hours old, fetch new data.
-    const lastSynced = await withDb((db) => db.get("dataSync", "tle"));
+    const lastSynced = await withDb((db) => db.get("dataSync", "omm"));
 
     const timeUntilNextSync =
       lastSynced === undefined
         ? 0
-        : tleMaxAgeMs - (Date.now() - lastSynced.getTime());
+        : ommMaxAgeMs - (Date.now() - lastSynced.getTime());
 
     setTimeout(sync, Math.max(0, timeUntilNextSync));
   };
 
   (async () => {
-    setAtom(await withDb((db) => db.getAll("tle")));
+    setAtom(await withDb((db) => db.getAll("omm")));
 
     await scheduleNextSync();
   })();

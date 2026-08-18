@@ -35,7 +35,7 @@
     - Frequency
   - Show frequency and doppler shift
 
-- [ ] Upgrade to the latest version of satellite.js and use OMM instead of TLE.
+- [x] Upgrade to the latest version of satellite.js and use OMM instead of TLE.
 - [x] Move control panel to the right side.
 - [x] Stop labels from scrolling when the control panel scrolls.
 - [x] Zoom in/out.

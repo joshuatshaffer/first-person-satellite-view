@@ -1,21 +1,20 @@
 import { atom, useAtom, useAtomValue } from "jotai";
 import { matchSorter } from "match-sorter";
-import { tlesAtom } from "../../../satdb/omm";
-import { parseCosparIdFromTle } from "../../parseCosparIdFromTle";
+import { ommsAtom } from "../../../satdb/omm";
 import { searchTextAtom, selectedSatelliteIdAtom } from "../../urlAtom";
 import styles from "./Search.module.css";
 import { SearchInput } from "./SearchInput";
 
 export const searchResultsAtom = atom((get) =>
   matchSorter(
-    get(tlesAtom).map((tle) => ({
-      ...tle,
-      noradId: tle.line1.slice(2, 7),
-      cosparId: parseCosparIdFromTle(tle.line1),
+    get(ommsAtom).map((omm) => ({
+      ...omm,
+      noradId: omm.NORAD_CAT_ID.toString(),
+      cosparId: omm.OBJECT_ID,
     })),
     get(searchTextAtom),
     {
-      keys: ["objectName", "noradId", "cosparId"],
+      keys: ["OBJECT_NAME", "noradId", "cosparId"],
     },
   ),
 );
@@ -28,7 +27,7 @@ function SearchResultList() {
 
   return (
     <ul className={styles.searchResults}>
-      {results.slice(0, 30).map(({ noradId, objectName }) => {
+      {results.slice(0, 30).map(({ noradId, OBJECT_NAME }) => {
         return (
           <li
             key={noradId}
@@ -38,7 +37,7 @@ function SearchResultList() {
               setSelectedSatelliteId(noradId);
             }}
           >
-            <div className={styles.searchResult_objectName}>{objectName}</div>
+            <div className={styles.searchResult_objectName}>{OBJECT_NAME}</div>
             <div>{noradId}</div>
           </li>
         );

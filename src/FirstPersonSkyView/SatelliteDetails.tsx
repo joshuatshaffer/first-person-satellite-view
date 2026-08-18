@@ -1,5 +1,4 @@
 import { atom, useAtom, useAtomValue } from "jotai";
-import { parseCosparIdFromTle } from "./parseCosparIdFromTle";
 import { satelliteDefinitionsAtom } from "./SatelliteDefinitions";
 import styles from "./SatelliteDetails.module.css";
 import {
@@ -31,8 +30,8 @@ export function SatelliteDetails() {
         {definition?.displayName ?? `Satellite ${selectedSatelliteId}`}
       </span>
       <div>NORAD ID: {selectedSatelliteId}</div>
-      {definition?.tle[0] ? (
-        <div>COSPAR ID: {parseCosparIdFromTle(definition?.tle[0])}</div>
+      {definition?.cosparId ? (
+        <div>COSPAR ID: {definition.cosparId}</div>
       ) : null}
       <HighlightedToggle satelliteId={selectedSatelliteId} />
       <ExternalLinks satelliteId={selectedSatelliteId} />
