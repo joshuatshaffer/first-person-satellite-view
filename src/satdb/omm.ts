@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { getDb, Omm, withDb } from "./db";
-import { daysToMs, hoursToMs } from "./ms";
+import { daysToMs } from "./ms";
 
 const ommJsonUrl =
   "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
@@ -91,14 +91,13 @@ ommsAtom.onMount = (setAtom) => {
         ? 0
         : ommMaxAgeMs - (Date.now() - lastSynced.getTime());
 
-    // Don't request again for at least 2 hours.
-    setTimeout(sync, Math.max(2 * hoursToMs, timeUntilNextSync));
+    // TODO: There are bugs that sometimes caused this to loop. Using 1 second
+    //       minimum to prevent said infinite loop from using up CPU.
+    setTimeout(sync, Math.max(1000, timeUntilNextSync));
   };
 
   (async () => {
     setAtom(await withDb((db) => db.getAll("omm")));
-
-    await sync();
 
     await scheduleNextSync();
   })();
