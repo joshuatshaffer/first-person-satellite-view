@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { getDb, Omm, withDb } from "./db";
-import { daysToMs } from "./ms";
+import { daysToMs, hoursToMs } from "./ms";
 
 const ommJsonUrl =
   "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
@@ -91,11 +91,14 @@ ommsAtom.onMount = (setAtom) => {
         ? 0
         : ommMaxAgeMs - (Date.now() - lastSynced.getTime());
 
-    setTimeout(sync, Math.max(0, timeUntilNextSync));
+    // Don't request again for at least 2 hours.
+    setTimeout(sync, Math.max(2 * hoursToMs, timeUntilNextSync));
   };
 
   (async () => {
     setAtom(await withDb((db) => db.getAll("omm")));
+
+    await sync();
 
     await scheduleNextSync();
   })();
