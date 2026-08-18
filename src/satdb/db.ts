@@ -23,10 +23,6 @@ export interface Omm {
   EPHEMERIS_TYPE?: 0 | undefined;
   CLASSIFICATION_TYPE?: "U" | "C" | undefined;
   REV_AT_EPOCH?: number | undefined;
-  /**
-   * Additional metadata fields, such as OBJECT_TYPE, COUNTRY_CODE, etc.
-   */
-  [key: string]: unknown;
 }
 
 export type DataSyncKey = "omm";
@@ -48,7 +44,7 @@ export async function getDb() {
       if (!db.objectStoreNames.contains("dataSync")) {
         db.createObjectStore("dataSync");
       }
-      if ((db.objectStoreNames as unknown as string[]).includes("tle")) {
+      if (db.objectStoreNames.contains("tle" as never)) {
         db.deleteObjectStore("tle" as never);
       }
       if (!db.objectStoreNames.contains("omm")) {

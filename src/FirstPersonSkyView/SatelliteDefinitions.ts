@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import * as satellite from "satellite.js";
-import { NoradId } from "../satdb/db";
+import { NoradId, Omm } from "../satdb/db";
 import { ommsAtom } from "../satdb/omm";
 
 export interface SatelliteDefinition {
@@ -13,7 +13,7 @@ export const satelliteDefinitionsAtom = atom((get) => {
   const records = new Map<NoradId, satellite.SatRec>();
 
   for (const omm of get(ommsAtom)) {
-    const record = satellite.json2satrec(omm);
+    const record = satellite.json2satrec(omm as Omm & Record<string, unknown>);
 
     const id = record.satnum;
 
