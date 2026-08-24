@@ -3,7 +3,7 @@ import { getDb, Omm, withDb } from "./db";
 import { daysToMs } from "./ms";
 
 const ommJsonUrl =
-  "https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json";
+  "https://raw.githubusercontent.com/joshuatshaffer/satellite-data/refs/heads/data/omm.json";
 
 /**
  * CelesTrak updates the OMM data at most every 2 hours.
