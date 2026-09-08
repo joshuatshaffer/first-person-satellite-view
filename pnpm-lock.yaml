@@ -131,8 +131,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       three:
-        specifier: 0.178.0
-        version: 0.178.0
+        specifier: 0.185.1
+        version: 0.185.1
       vike:
         specifier: 0.4.266
         version: 0.4.266(react-streaming@0.4.20(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(srvx@0.12.8)(supports-color@8.1.1)(vite@8.2.2(@types/node@24.0.10)(esbuild@0.28.2)(jiti@2.7.0)(less@4.9.1(supports-color@8.1.1))(sass-embedded@1.104.0)(sass@1.104.0)(stylus@0.62.0(supports-color@8.1.1))(tsx@4.23.13)(yaml@2.9.0))
@@ -2245,8 +2245,8 @@ packages:
     resolution: {integrity: sha512-gAQ9qrUN/UCypHtGFbbe7Rc/f9bzO88IwrG8TDo/aMKAApKyD6E3W4Cm0EfhfBb6Z6SKt59tTCTfD+n1xmAvMg==}
     engines: {node: '>=16.0.0'}
 
-  three@0.178.0:
-    resolution: {integrity: sha512-ybFIB0+x8mz0wnZgSGy2MO/WCO6xZhQSZnmfytSPyNpM0sBafGRVhdaj+erYh5U+RhQOAg/eXqw5uVDiM2BjhQ==}
+  three@0.185.1:
+    resolution: {integrity: sha512-5aojFCXKwnjBRZvUnt3WFfEcvUJgkN5LlijRFN95hMy8WVkG4I0QNcJE+OuWvuJ0bOdStrbfXn0pkd6/QyiAlg==}
 
   tinybench@6.1.4:
     resolution: {integrity: sha512-9APumHG7r4yOk4X4WlkmE71aZcv1gvin1czO3OQ1U9iJcFA5Ja/ygyb0vPOVHTthFozUYs8CLoLUlM8grb2lTQ==}
@@ -4257,7 +4257,7 @@ snapshots:
 
   sync-message-port@1.2.0: {}
 
-  three@0.178.0: {}
+  three@0.185.1: {}
 
   tinybench@6.1.4: {}
 
