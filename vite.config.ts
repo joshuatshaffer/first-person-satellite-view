@@ -18,16 +18,6 @@ export default defineConfig({
   ],
   base: "/first-person-satellite-view/",
 
-  esbuild: {
-    // Need to explicitly set target to ES2020. Otherwise, some other statements
-    // are reordered incorrectly and when `useDefineForClassFields` is true the
-    // class fields will be initialized before constructor shorthand properties
-    // are assigned.
-    //
-    // https://github.com/vitejs/vite/issues/11722#issuecomment-1831895962
-    target: "ES2020",
-  },
-
   build: {
     // This code is open-source, so we might as well expose sourcemaps.
     sourcemap: true,
