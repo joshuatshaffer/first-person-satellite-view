@@ -16,7 +16,7 @@ export default defineConfig({
       certDir: ".devServer/cert",
     }),
   ],
-  base: "/satellite/",
+  base: "/first-person-satellite-view/",
 
   esbuild: {
     // Need to explicitly set target to ES2020. Otherwise, some other statements
