@@ -13,7 +13,7 @@ import { makeSatelliteLabel } from "./SatelliteLabel/makeSatelliteLabel";
 import { makeSatelliteOffscreenPointer } from "./SatelliteLabel/makeSatelliteOffscreenPointer";
 import { makeSatellitePoints } from "./SatellitePoints";
 import { makeSatellitePositions } from "./SatellitePositions/SatellitePositions";
-import { dragScaleAtom, viewControlModeAtom } from "./settings";
+import { viewControlModeAtom } from "./settings";
 import { timeAtom } from "./Time";
 import { selectedSatelliteIdAtom } from "./urlAtom";
 
@@ -136,8 +136,7 @@ export function startSkyViewRenderer({
       const viewControlMode = store.get(viewControlModeAtom);
 
       if (viewControlMode === "drag") {
-        const scale =
-          degToRad(camera.getEffectiveFOV()) * store.get(dragScaleAtom);
+        const scale = degToRad(camera.getEffectiveFOV());
 
         camera.rotation.set(
           clamp(
