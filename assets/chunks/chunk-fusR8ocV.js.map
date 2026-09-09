@@ -1,0 +1,1 @@
+{"version":3,"file":"chunk-fusR8ocV.js","names":[],"sources":["../../../../src/SkyView/UiOverlay/ControlPanel/Field.module.css"],"sourcesContent":[".fieldContainer {\n  margin: 5px 0;\n  display: flex;\n}\n\n.fieldLabel {\n  flex-grow: 1;\n  padding-right: 0.3em;\n}\n\n.fieldInput {\n  width: 150px;\n}\n"],"mappings":""}
