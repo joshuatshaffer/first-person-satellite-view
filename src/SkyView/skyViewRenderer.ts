@@ -13,7 +13,7 @@ import { makeSatelliteLabel } from "./SatelliteLabel/makeSatelliteLabel";
 import { makeSatelliteOffscreenPointer } from "./SatelliteLabel/makeSatelliteOffscreenPointer";
 import { makeSatellitePoints } from "./SatellitePoints";
 import { makeSatellitePositions } from "./SatellitePositions/SatellitePositions";
-import { dragScaleAtom, lookScaleAtom, viewControlModeAtom } from "./settings";
+import { dragScaleAtom, viewControlModeAtom } from "./settings";
 import { timeAtom } from "./Time";
 import { selectedSatelliteIdAtom } from "./urlAtom";
 
@@ -124,7 +124,7 @@ export function startSkyViewRenderer({
 
   let zoom = 1;
   const onZoom = (delta: number) => {
-    // TODO: Zoom towards the pointer position in drag and look modes.
+    // TODO: Zoom towards the pointer position when in drag mode.
     zoom = clamp(zoom - delta * 0.001, 1, 10);
 
     camera.zoom = zoom * zoom;
@@ -147,22 +147,6 @@ export function startSkyViewRenderer({
             maxElevation,
           ),
           camera.rotation.y +
-            ((to.offsetX - from.offsetX) / window.innerWidth) * scale,
-          0,
-          "YXZ",
-        );
-      } else if (viewControlMode === "look") {
-        const scale =
-          degToRad(camera.getEffectiveFOV()) * store.get(lookScaleAtom);
-
-        camera.rotation.set(
-          clamp(
-            camera.rotation.x -
-              ((to.offsetY - from.offsetY) / window.innerHeight) * scale,
-            minElevation,
-            maxElevation,
-          ),
-          camera.rotation.y -
             ((to.offsetX - from.offsetX) / window.innerWidth) * scale,
           0,
           "YXZ",
@@ -238,12 +222,6 @@ export function startSkyViewRenderer({
               canvas.style.cursor = "grabbing";
             } else {
               canvas.style.cursor = "grab";
-            }
-          } else if (viewControlMode === "look") {
-            if (inputState.downPointers.length > 0) {
-              canvas.style.cursor = "none";
-            } else {
-              canvas.style.cursor = "move";
             }
           } else {
             canvas.style.cursor = "default";

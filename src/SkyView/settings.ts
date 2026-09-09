@@ -13,7 +13,7 @@ export const backgroundSettingAtom = atomWithStorage<BackgroundSetting>(
   "none",
 );
 
-export const viewControlModes = ["drag", "look", "deviceOrientation"] as const;
+export const viewControlModes = ["drag", "deviceOrientation"] as const;
 export type ViewControlMode = (typeof viewControlModes)[number];
 
 export const viewControlModeAtom = atomWithStorage<ViewControlMode>(
@@ -24,11 +24,6 @@ export const viewControlModeAtom = atomWithStorage<ViewControlMode>(
 export const dragScaleAtom = atomWithStorage(
   localStoragePrefix + "drag-scale",
   1,
-);
-
-export const lookScaleAtom = atomWithStorage(
-  localStoragePrefix + "look-scale",
-  4,
 );
 
 export const observerPositionModes = ["currentPosition", "manual"] as const;
