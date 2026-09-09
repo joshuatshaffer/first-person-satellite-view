@@ -1,5 +1,5 @@
-import { FirstPersonSkyView } from "../../FirstPersonSkyView/FirstPersonSkyView";
+import { SkyView } from "../../SkyView/SkyView";
 
 export function Page() {
-  return <FirstPersonSkyView />;
+  return <SkyView />;
 }

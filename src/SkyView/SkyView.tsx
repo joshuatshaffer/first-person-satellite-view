@@ -5,7 +5,7 @@ import { backgroundSettingAtom } from "./settings";
 import { SkyViewRenderer } from "./SkyViewRenderer";
 import { UiOverlay } from "./UiOverlay/UiOverlay";
 
-export function FirstPersonSkyView() {
+export function SkyView() {
   const background = useAtomValue(backgroundSettingAtom);
 
   return (
